@@ -23,11 +23,13 @@ class CalendarStatus extends ChangeNotifier {
   DateTime get getSelectDate => selectDate;
 
   void setClickSave() {
+    print("setClickSave");
     selectDate = saveDate;
     notifyListeners();
   }
 
   void setSaveDate(DateTime dt) {
+    print("setSaveDate");
     saveDate = dt;
     notifyListeners();
   }

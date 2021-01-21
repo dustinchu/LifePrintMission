@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:text_print_3d/common/extra/color.dart';
 import 'package:text_print_3d/state/provider_ble.dart';
 import 'package:text_print_3d/state/setting_status.dart';
+import 'package:text_print_3d/util/blue.dart';
 
 import 'widget.dart';
 
@@ -13,7 +14,7 @@ class SettingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var settingStatus = Provider.of<SettingStatus>(context);
-
+    var bluetooth = BlueUtil.instance;
     void username() {
       //切換頁面前先將顏色改為初始
       Provider.of<SettingStatus>(context, listen: false)
@@ -73,11 +74,9 @@ class SettingScreen extends StatelessWidget {
                 builder: (c, snapshot) {
                   final state = snapshot.data;
                   if (state == BluetoothState.on) {
-                    Provider.of<BluetoothStatus>(context, listen: false)
-                        .connectToDevice();
+                    bluetooth.connectToDevice();
                     if (BluetoothDeviceState.connected == null) {
-                      Provider.of<BluetoothStatus>(context, listen: false)
-                          .connectToDevice();
+                      bluetooth.connectToDevice();
                       return _rowWidget("Bluetooth", "Disconnected",
                           notification, false, false);
                     } else {

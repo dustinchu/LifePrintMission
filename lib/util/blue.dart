@@ -1,6 +1,9 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:provider/provider.dart';
+import 'package:text_print_3d/state/provider_ble.dart';
 import 'dart:convert' show LineSplitter, utf8;
 
 import 'http_post.dart';
@@ -15,6 +18,7 @@ class BlueUtil {
   BluetoothCharacteristic targetCharacteristic;
   List<BluetoothService> services;
   bool bluetoothConnectState = false;
+  BuildContext context;
   void scan() {
     FlutterBlue.instance.startScan();
   }
@@ -72,10 +76,20 @@ class BlueUtil {
         //  characteristic.setNotifyValue(true);
         characteristic.value.listen((value) {
           // print("value===$value");
-
-          if (_dataParser(value) == "OK") {
-            print("value===${_dataParser(value)}   ");
-          }
+          // _dataParser(value).replaceAll(new RegExp(r"\s+\b|\b\s"), "");
+          print(
+              "value===${_dataParser(value).replaceAll(new RegExp(r"\s+\b|\b\s"), "")}1   ${_dataParser(value).replaceAll(new RegExp(r"\s+\b|\b\s"), "") == "ok"}   ");
+          // if (value.length > 0) {
+            
+            if (_dataParser(value).replaceAll(new RegExp(r"\s+\b|\b\s"), "") == "end" &&state) {
+              state= false;
+              Provider.of<BluetoothStatus>(context, listen: false)
+                  .setBlueProgressValue(100);
+              Provider.of<BluetoothStatus>(context, listen: false)
+                  .setBlueProgressValueText(3);
+              print("value===${_dataParser(value)}   ");
+            }
+          // }
         });
         bluetoothConnectState = true;
         // }
@@ -92,32 +106,36 @@ class BlueUtil {
     return utf8.decode(dataFromDevice);
   }
 
-  void write() async {}
-
   void writeBtn(String data) async {
-    // bluetoothWriteState = true;
-    // notifyListeners();
-
     if (device == null) return;
-    // setBlueProgressValue(10);
-    // setBlueProgressValueText(1);
+
+    Provider.of<BluetoothStatus>(context, listen: false)
+        .setBlueProgressValue(10);
+    Provider.of<BluetoothStatus>(context, listen: false)
+        .setBlueProgressValueText(1);
+
     //post http 得到gcode
     String gcode = await requestMethod(data);
+    //String 每一行存成list
     LineSplitter ls = new LineSplitter();
-    // setBlueProgressValue(50);
-    // setBlueProgressValueText(2);
+
+    Provider.of<BluetoothStatus>(context, listen: false)
+        .setBlueProgressValue(50);
+    Provider.of<BluetoothStatus>(context, listen: false)
+        .setBlueProgressValueText(2);
     //把gcode存起來
     var print_lines = ls.convert(gcode);
-    // print("gcode==$gcode");
     //轉成bytes 藍芽傳過去
     // List<int> bytes = utf8.encode(print_lines[0]);
     //   await targetCharacteristic.write(bytes);
+
+    state= true;
     for (var g in print_lines) {
-      Future.delayed(const Duration(milliseconds: 1000), () {
-        List<int> bytes = utf8.encode(g);
-        targetCharacteristic.write(bytes);
-        print("g===>$g");
-      });
+      await Future.delayed(Duration(microseconds: 100));
+      //  await Future.delayed(Duration(microseconds: 100));
+      List<int> bytes = utf8.encode(g);
+      targetCharacteristic.write(bytes);
+      print("g===>$g");
     }
   }
 }

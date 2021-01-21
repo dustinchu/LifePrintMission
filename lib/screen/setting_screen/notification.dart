@@ -94,8 +94,20 @@ class _SettingNotificationState extends State<SettingNotification> {
       print("keyboardClose====$text");
     }
 
-    void keyboardChange(text) {
-      print("keyboardChange====$text");
+    void keyboardChange(String text) {
+      if (text.length == 5) {
+        var sp = text.split(':');
+        if (int.parse(sp[0]) > 24 && int.parse(sp[1]) < 60) {
+            print("y");
+        }else{
+          print("e");
+          settingState.setNewNotificationTime(text);
+           Provider.of<SettingStatus>(context, listen: false).compare();
+        }
+      }
+      //
+      // settingState.getNotificationTime
+      print("keyboardChange====${text.length}");
     }
 
     void amOntap() {

@@ -336,9 +336,11 @@ class _HomeScreenState extends State<HomeScreen>
             return Material(
               child: InkWell(
                 onTap: () {
+                  print("state===>${BluetoothDeviceState.connected}");
                   // Slidable.of(context).close();
                   if (state == BluetoothState.on) {
                     if (dateStatus.getPrintTitle != "") {
+                      bluetooth.context = context;
                       bluetooth.writeBtn(dateStatus.getPrintTitle);
                       // Provider.of<BluetoothStatus>(context, listen: false)
                       //     .writeBtn(dateStatus.getPrintTitle);

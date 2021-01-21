@@ -124,7 +124,7 @@ class DateStatus extends ChangeNotifier {
     printTitle = "";
     await _sql.getTodo(toDay).then((value) {
       listData = value;
-      //有緊急的存起來
+      //有緊急的存起來 給藍芽print判斷 只列印緊急的資料
       if (value != null) {
         for (var list in value) {
           if (list.imageStatus == 2) {
@@ -147,7 +147,17 @@ class DateStatus extends ChangeNotifier {
 
     await _sql.open();
     // await _sql.deleteAll();
-    await _sql.getTodo(toDay).then((value) => listData = value);
+    await _sql.getTodo(toDay).then((value) {
+      listData = value;
+      //有緊急的存起來
+      if (value != null) {
+        for (var list in value) {
+          if (list.imageStatus == 2) {
+            printTitle = list.listTitle;
+          }
+        }
+      }
+    });
     notifyListeners();
     // await _sql.close();
 
@@ -191,13 +201,22 @@ class DateStatus extends ChangeNotifier {
       }
     }
     //寫入時沒選擇日曆 也可寫入 把當天日期存起來
-    if (addDate == "") addDate = toDayString;
+    if (addDate == "") {
+      // Provider.of<CalendarStatus>(context, listen: false)
+      //     .setSelectDate(DateTime.now().add(new Duration(days: 1)));
+      addDate = tomorrow;
+    }
 
     if (status)
       toastInfo(msg);
     else {
-      //沒選日期將今天寫進去
-      if (addIntDate == 0) addIntDate = toDayInt();
+      //沒選日期將明天寫進去
+      if (addIntDate == 0) {
+        addIntDate = toTomorrow();
+        //沒選日期寫入的話將明天日期存起來  跳到日曆頁選擇顯示用
+        Provider.of<CalendarStatus>(context, listen: false)
+            .setSelectDate(DateTime.now().add(new Duration(days: 1)));
+      }
       await _sql.open();
       // insert sql
       var sqlData = ListDataModel(

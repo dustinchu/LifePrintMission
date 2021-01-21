@@ -9,23 +9,29 @@ class HomeStatus extends ChangeNotifier {
   bool bottomStatus = true;
   bool rowBackStatus = false;
   int currentIndex = 0;
+  int iconIndex = 0;
+
   String toDay = "Today's";
   String titleYear =
       new DateFormat("MMM", "en_US").format(DateTime.now()).toUpperCase() +
           ". " +
           new DateFormat("y", "en_US").format(DateTime.now()).toUpperCase();
 
+  int get getIconIndex => iconIndex;
   bool get getBottomStatus => bottomStatus;
   int get getCurrentIndexStatus => currentIndex;
   bool get getRowBackStatus => rowBackStatus;
   String get getToDay => toDay;
   String get getTitleYear => titleYear;
 
+  void setIconIndex(int index) {
+    iconIndex = index;
+  }
+
   void setTitleYear(DateTime date) async {
-    titleYear =
-      new DateFormat("MMM", "en_US").format(date).toUpperCase() +
-          ". " +
-          new DateFormat("y", "en_US").format(date).toUpperCase();
+    titleYear = new DateFormat("MMM", "en_US").format(date).toUpperCase() +
+        ". " +
+        new DateFormat("y", "en_US").format(date).toUpperCase();
     notifyListeners();
   }
 

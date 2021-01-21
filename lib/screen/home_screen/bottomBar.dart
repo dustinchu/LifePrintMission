@@ -103,49 +103,62 @@ class BottomBar extends StatelessWidget {
   }
 
   void click(index, context) {
-    if (index == 0)
-      //bottom icon
-      Provider.of<HomeStatus>(context, listen: false).setCurrentIndex(0);
-    if (index == 1) {
-      Backdrop.of(context).fling();
+    if (index == 0) {
+      if (index != homeState.getIconIndex) {
+        Provider.of<HomeStatus>(context, listen: false).setIconIndex(index);
+        //bottom icon
+        Provider.of<HomeStatus>(context, listen: false).setCurrentIndex(0);
+      }
+    }
 
-      //寫入選擇日期 紀錄 讓按鈕不能點 使用
-      Provider.of<LayerStatus>(context, listen: false).setTomorrow("tomorrow");
-      //編輯頁面資料初始化
-      Provider.of<DateStatus>(context, listen: false).initListEdit();
-      //關閉日曆
-      Provider.of<LayerStatus>(context, listen: false)
-          .layerStatusClick("textField");
-      //打開編輯頁面edit是否要讀取provider資料
-      var editState = LayerEditState.instance;
-      editState.state = false;
+    if (index == 1) {
+      if (index != homeState.getIconIndex) {
+        Provider.of<HomeStatus>(context, listen: false).setIconIndex(index);
+
+        Backdrop.of(context).fling();
+
+        //寫入選擇日期 紀錄 讓按鈕不能點 使用
+        Provider.of<LayerStatus>(context, listen: false)
+            .setTomorrow("tomorrow");
+        //編輯頁面資料初始化
+        Provider.of<DateStatus>(context, listen: false).initListEdit();
+        //關閉日曆
+        Provider.of<LayerStatus>(context, listen: false)
+            .layerStatusClick("textField");
+        //打開編輯頁面edit是否要讀取provider資料
+        var editState = LayerEditState.instance;
+        editState.state = false;
+      }
     }
 
     //圖片選擇
     Provider.of<LayerStatus>(context, listen: false).layerStatusImageClick(4);
     // if (index == 2) Navigator.pushNamed(context, '/calendar');
     if (index == 2) {
-      //預設月曆時間
-      // Provider.of<CalendarStatus>(context, listen: false)
-      //     .setInitialSelectDay(DateTime.now());
-      Provider.of<CalendarStatus>(context, listen: false)
-          .setSelectDate(DateTime.now());
-      // setSelectDate
-      //日曆mark
-      Provider.of<CalendarStatus>(context, listen: false).getAllMark();
-      //切換頁面得到list
-      Provider.of<CalendarStatus>(context, listen: false).getAllListData();
+      if (index != homeState.getIconIndex) {
+        Provider.of<HomeStatus>(context, listen: false).setIconIndex(index);
+        //預設月曆時間
+        // Provider.of<CalendarStatus>(context, listen: false)
+        //     .setInitialSelectDay(DateTime.now());
+        Provider.of<CalendarStatus>(context, listen: false)
+            .setSelectDate(DateTime.now());
+        // setSelectDate
+        //日曆mark
+        Provider.of<CalendarStatus>(context, listen: false).getAllMark();
+        //切換頁面得到list
+        Provider.of<CalendarStatus>(context, listen: false).getAllListData();
 
-      //tab title 年份
-      Provider.of<CalendarTabStatus>(context, listen: false)
-          .setYear(DateTime.now().year.toString());
+        //tab title 年份
+        Provider.of<CalendarTabStatus>(context, listen: false)
+            .setYear(DateTime.now().year.toString());
 
-      Future.delayed(const Duration(milliseconds: 100), () {
-        Provider.of<HomeStatus>(context, listen: false).setCurrentIndex(2);
-      });
-      //bottom icon
+        Future.delayed(const Duration(milliseconds: 100), () {
+          Provider.of<HomeStatus>(context, listen: false).setCurrentIndex(2);
+        });
+        //bottom icon
 
-      // Navigator.of(context).push(createRoute(CalendarScreen()));
+        // Navigator.of(context).push(createRoute(CalendarScreen()));
+      }
     }
   }
 }
